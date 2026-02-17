@@ -70,7 +70,10 @@ export default function Pesquisa(){
                         <YoutubeChannel id={item["id"]["channelId"]} item={item["snippet"]} key={index} />
                     :
                     item["id"]["kind"] == "youtube#video" ?
-                        <YoutubeVideo id={item["id"]["videoId"]} item={item["snippet"]} />
+                        <YoutubeVideo 
+                            id={item["id"]["videoId"]} 
+                            item={item["snippet"]}
+                        />
                     :
                     <Text key={index}>{item["snippet"]["title"]}</Text>}
                 </View>))}

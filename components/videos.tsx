@@ -1,22 +1,32 @@
-import { Image, StyleSheet, View, Text } from "react-native"
+import { Link, useRouter } from "expo-router"
+import { Image, StyleSheet, View, Text, Pressable } from "react-native"
 
 interface Props{
     item: any,
-    id: string
+    id: string,
 }
 
-export default function YoutubeVideo({item}: Props){
+export default function YoutubeVideo({item, id}: Props){
+    const route = useRouter()
+    const goToVideo = ()=> {
+        route.push({
+            pathname: "/show/video/[videoId]",
+            params: {videoId: id, title: String(item["title"])}
+        })
+    }
 
     return (<View>
-        <Image 
-            style={style.image}
-            source={{
-                uri: item["thumbnails"]["high"]["url"]
-            }}
-        />
+        <Pressable onPress={goToVideo}>
+            <Image 
+                style={style.image}
+                source={{
+                    uri: item["thumbnails"]["high"]["url"]
+                }}
+            />
 
-        <Text style={style.title}>{item["title"]}</Text>
-        <Text>Enviado: {item["publishTime"]}</Text>
+            <Text style={style.title}>{item["title"]}</Text>
+            <Text>Enviado: {item["publishTime"]}</Text>
+        </Pressable>
     </View>)
 }
 
@@ -27,7 +37,6 @@ const style = StyleSheet.create({
         borderRadius: 15,
     },
     "title": {
-        marginBottom: 2,
         fontSize: 20,
         fontWeight: 'bold'
     },
