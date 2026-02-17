@@ -1,8 +1,9 @@
 import YoutubeChannel from '@/components/channel';
 import YoutubeVideo from '@/components/videos';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useState } from 'react'
-import { StyleSheet, Text, TextInput, TouchableHighlight, View, ScrollView } from 'react-native'
+import { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Pesquisa(){
     const [query, setQuery] = useState('');
@@ -13,6 +14,8 @@ export default function Pesquisa(){
     const [searchOpt, setSearchOpt] = useState({
         "max": 25
     })
+
+    const insets = useSafeAreaInsets();
 
     async function pesquisar(q: string){
         q.replaceAll(' ', '+')
@@ -60,7 +63,7 @@ export default function Pesquisa(){
             }
         </View>
 
-        <ScrollView style={videosListStyle.scrollView}>
+        <ScrollView style={{marginBottom: insets.bottom}}>
             {erro ? <>
                 <Text>Erro ao carregar resultados da pesquisa</Text>
                 <Text>{erroMsg}</Text>
@@ -82,12 +85,6 @@ export default function Pesquisa(){
         </ScrollView>
     </View>
 }
-
-const videosListStyle = StyleSheet.create({
-    "scrollView": {
-        marginBottom: 10
-    }
-})
 
 const searchStyles = StyleSheet.create({
     "searchBar": {

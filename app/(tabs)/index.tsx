@@ -12,8 +12,6 @@ export default function Index() {
 
   return (
     <View>
-      <Text>AAA</Text>
-
       <YoutubePlayer
         height={300}
         videoId={"iee2TATGMyI"}
