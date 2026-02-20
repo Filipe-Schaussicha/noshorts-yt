@@ -1,8 +1,5 @@
-import Constants from 'expo-constants';
-import { StyleSheet } from 'react-native';
-import React, { useState, useCallback, useRef } from "react";
-import { Button, View, Alert, Text } from "react-native";
-import YoutubePlayer from "react-native-youtube-iframe";
+import React, { useCallback } from "react";
+import { Alert, Text, View } from "react-native";
 
 export default function Index() {
 
@@ -12,11 +9,7 @@ export default function Index() {
 
   return (
     <View>
-      <YoutubePlayer
-        height={300}
-        videoId={"iee2TATGMyI"}
-        onChangeState={onStateChange}
-      />
+      <Text>Index</Text>
     </View>
   );
 

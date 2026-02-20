@@ -1,5 +1,6 @@
 import YoutubeChannel from '@/components/channel';
 import YoutubeVideo from '@/components/videos';
+import getAPIKey from '@/util/getAPIKey';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native';
@@ -12,7 +13,7 @@ export default function Pesquisa(){
     const [erro, setErro] = useState(false);
     const [erroMsg, setErroMsg] = useState('')
     const [searchOpt, setSearchOpt] = useState({
-        "max": 25
+        "max": 50
     })
 
     const insets = useSafeAreaInsets();
@@ -22,7 +23,7 @@ export default function Pesquisa(){
 
         const opts = `&maxResults=${searchOpt.max}`
 
-        fetch(`https://www.googleapis.com/youtube/v3/search?key=${process.env.EXPO_PUBLIC_API_KEY}&part=snippet&q=${q}${opts}`).then(res =>
+        fetch(`https://www.googleapis.com/youtube/v3/search?key=${getAPIKey()}&part=snippet&q=${q}${opts}`).then(res =>
             res.json()
         ).then(json => {setQueryResults(json["items"]); setErro(false)}).catch((e)=>{setErro(true); setErroMsg(e)})
     }

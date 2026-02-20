@@ -1,9 +1,17 @@
-import insertDotsNumber from "@/util/insertDotsNumber";
+import getAPIKey from "@/util/getAPIKey";
+import insertDotsNumber from "@/util/stringUtils";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import YoutubePlayer from "react-native-youtube-iframe";
+
+enum State{
+    NOT_LOADING,
+    LOADING,
+    SUCCESS,
+    ERROR
+}
 
 export default function YoutubeVideoPage(){
     const { width, height } = useWindowDimensions()
@@ -16,23 +24,23 @@ export default function YoutubeVideoPage(){
 
     const [showDesc, setShowDesc] = useState(false);
 
-    const [loadingComents, setLoadingComents] = useState(0)
+    const [loadingComents, setLoadingComents] = useState(State.NOT_LOADING)
     const [comentsInfo, setComentsInfo] = useState([])
 
     const insets = useSafeAreaInsets();
 
     async function loadComents(){
-        setLoadingComents(1)
+        setLoadingComents(State.LOADING)
 
-        fetch(`https://www.googleapis.com/youtube/v3/commentThreads?key=${process.env.EXPO_PUBLIC_API_KEY}&part=snippet&videoId=${videoId}&order=relevance&maxResults=50`).then(res=>
+        fetch(`https://www.googleapis.com/youtube/v3/commentThreads?key=${getAPIKey()}&part=snippet&videoId=${videoId}&order=relevance&maxResults=100`).then(res=>
             res.json()
         ).then(json=>{setComentsInfo(
             json["items"].map((item:any)=>(item["snippet"]["topLevelComment"]))
-        ); setLoadingComents(2)}).catch((e)=>{setLoadingComents(-1); Alert.alert(`Error: ${e}`)})
+        ); setLoadingComents(State.SUCCESS)}).catch((e)=>{setLoadingComents(State.ERROR); Alert.alert(`Error: ${e}`)})
     }
 
     useEffect(()=>{
-        fetch(`https://www.googleapis.com/youtube/v3/videos?key=${process.env.EXPO_PUBLIC_API_KEY}&part=snippet,statistics&id=${videoId}`).then(res =>
+        fetch(`https://www.googleapis.com/youtube/v3/videos?key=${getAPIKey()}&part=snippet,statistics&id=${videoId}`).then(res =>
             res.json()
         ).then(json => {setVideoInfo(json["items"][0]); setLoadinginfo(false)}).catch((e)=>{setLoadinginfo(true); Alert.alert(`Error: ${e}`)})
     }, [])
@@ -97,13 +105,13 @@ export default function YoutubeVideoPage(){
             </View>
 
             <View style={comentsStyle.mainView}>
-                {loadingComents != 2 ?
-                    loadingComents == 1 ?
+                {loadingComents != State.SUCCESS ?
+                    loadingComents == State.LOADING ?
                     <Text style={comentsStyle.title}>Carregando...</Text>
                     :
                     <Pressable onPress={loadComents}>
                         <Text style={comentsStyle.title}>
-                            {loadingComents == 0 ? 'Click aqui para carregar comentários' : 'Erro ao carregar comentários. Tentar novamente?'}
+                            {loadingComents == State.NOT_LOADING ? 'Click aqui para carregar comentários' : 'Erro ao carregar comentários. Tentar novamente?'}
                         </Text>
                     </Pressable>
                     :
