@@ -1,35 +1,29 @@
-import { useRouter } from "expo-router"
 import { Image, Pressable, StyleSheet, Text, View } from "react-native"
 
 interface Props{
-    videoId: string,
+    thumbUrl: string,
     title: string,
-    thumb: string,
-    publishTime: string,
-    channelTitle: string,
-    channelId: string
+    playlistId: string,
+    viaYoutubeApi: boolean
 }
 
-export default function YoutubeVideo(props: Props){
-    const route = useRouter()
-    const goToVideo = ()=> {
-        route.push({
-            pathname: "/show/video/[videoId]",
-            params: {videoId: props.videoId, title: props.title}
-        })
-    }
+function goToPlalist(){
+
+}
+
+export default function YoutubePlaylist(props: Props){
 
     return (<View style={{marginVertical: 10}}>
-        <Pressable onPress={goToVideo}>
+        <Pressable onPress={goToPlalist}>
             <Image 
                 style={style.image}
                 source={{
-                    uri: props.thumb
+                    uri: props.thumbUrl
                 }}
             />
 
             <Text style={style.title}>{props.title}</Text>
-            <Text>Enviado: {props.publishTime}</Text>
+            <Text>Playlist</Text>
         </Pressable>
     </View>)
 }

@@ -1,3 +1,4 @@
+import YoutubeChannel from "@/components/channel";
 import getAPIKey from "@/util/getAPIKey";
 import insertDotsNumber from "@/util/stringUtils";
 import { useLocalSearchParams } from "expo-router";
@@ -70,9 +71,12 @@ export default function YoutubeVideoPage(){
             <Text style={styles.title} >{title}</Text>
 
             {!loadingInfo && <>
-            <View>
-                <Text>{videoInfo["snippet"]["channelTitle"]}</Text>
-            </View>
+
+            <YoutubeChannel 
+                id={videoInfo["snippet"]["channelId"]}
+                titulo={videoInfo["snippet"]["channelTitle"]}
+                thumbUrl=""
+            />
             
             <View style={descStyles.mainView} >
                 <Text>
@@ -92,16 +96,19 @@ export default function YoutubeVideoPage(){
                     {videoId}
                 </Text>
 
-                <Text>
-                    <Text style={descStyles.bold}>Description: </Text>
-                    {!showDesc ?
-                        <Pressable onPress={()=>setShowDesc(val=>!val)}><Text>Show</Text></Pressable>
-                        :
-                        <Text>
-                            {videoInfo["snippet"]["description"]}
-                        </Text>
-                    }
-                </Text>
+                {!showDesc ?
+                    <Pressable onPress={()=>setShowDesc(true)}>
+                        <Text style={descStyles.bold}>Mostrar Descrição</Text>
+                    </Pressable>
+                :
+                <>
+                    <Text>{videoInfo["snippet"]["description"]}</Text>
+
+                    <Pressable onPress={()=>setShowDesc(false)}>
+                        <Text style={descStyles.bold}>Esconder Descrição</Text>
+                    </Pressable>
+                </>
+                }
             </View>
 
             <View style={comentsStyle.mainView}>
@@ -175,8 +182,7 @@ const descStyles = StyleSheet.create({
     "mainView": {
         backgroundColor: '#DDDDDD',
         borderRadius: 15,
-        padding: 10,
-        marginTop: 10
+        padding: 10
     },
     "bold": {
         fontWeight: 'bold'

@@ -1,4 +1,5 @@
 import YoutubeChannel from '@/components/channel';
+import YoutubePlaylist from '@/components/playlist';
 import YoutubeVideo from '@/components/videos';
 import getAPIKey from '@/util/getAPIKey';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -69,15 +70,32 @@ export default function Pesquisa(){
                 <Text>Erro ao carregar resultados da pesquisa</Text>
                 <Text>{erroMsg}</Text>
             </>:<>
-                {queryResults.map((item, index) => (<View key={index} style={{marginBottom: 20}}>
+                {queryResults.map((item, index) => (<View key={index}>
                     {item["id"]["kind"] == "youtube#channel" ?
-                        <YoutubeChannel id={item["id"]["channelId"]} item={item["snippet"]} key={index} />
+                        <YoutubeChannel 
+                            id={item["id"]["channelId"]}
+                            key={index}
+                            titulo={item["snippet"]["title"]}
+                            thumbUrl={item["snippet"]["thumbnails"]["medium"]["url"]}
+                        />
                     :
                     item["id"]["kind"] == "youtube#video" ?
                         <YoutubeVideo 
-                            id={item["id"]["videoId"]} 
-                            item={item["snippet"]}
+                            videoId={item["id"]["videoId"]} 
+                            title={item["snippet"]["title"]}
+                            thumb={item["snippet"]["thumbnails"]["medium"]["url"]}
+                            publishTime={item["snippet"]["publishedAt"]}
+                            channelTitle={item["channelTitle"]}
+                            channelId={item["snippet"]["channelId"]}
                         />
+                    :
+                    item["id"]["kind"] == "youtube#playlist" ?
+                    <YoutubePlaylist 
+                        playlistId={item["id"]["playlistId"]}
+                        title={item["snippet"]["title"]}
+                        thumbUrl={item["snippet"]["thumbnails"]["medium"]["url"]}
+                        viaYoutubeApi={true}
+                    />
                     :
                     <Text key={index}>{item["snippet"]["title"]}</Text>}
                 </View>))}

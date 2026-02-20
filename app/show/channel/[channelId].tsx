@@ -1,3 +1,4 @@
+import YotubeVideoList from "@/components/videoList";
 import getAPIKey from "@/util/getAPIKey";
 import insertDotsNumber from "@/util/stringUtils";
 import { useLocalSearchParams } from "expo-router";
@@ -12,13 +13,13 @@ enum State{
 }
 
 export default function YoutubeChannelPage(){
-    const { channelId, title, imgUrl } = useLocalSearchParams();
+    const { channelId, title } = useLocalSearchParams();
     
     const [data, setData] = useState<any>({});
     const [loadingData, setLoadingData] = useState(State.LOADING)
 
     useEffect(()=>{
-        fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet,statistics,brandingSettings&key=${getAPIKey()}&id=${channelId}`).then(res=>{
+        fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails,statistics,brandingSettings&key=${getAPIKey()}&id=${channelId}`).then(res=>{
             return res.json()
         }).then((json) => {setData(json["items"][0]); setLoadingData(State.SUCCESS)}).catch((e)=>{setLoadingData(State.ERROR); Alert.alert(`Erro: ${e}`)})
     }, [])
@@ -34,12 +35,14 @@ export default function YoutubeChannelPage(){
         }
 
         <View style={style.redView}>
-            <Image 
-                style={style.channelPhoto}
-                source={{
-                    uri: String(imgUrl)
-                }}
-            />
+            {loadingData == State.SUCCESS &&
+                <Image 
+                    style={style.channelPhoto}
+                    source={{
+                        uri: data["snippet"]["thumbnails"]["medium"]["url"]
+                    }}
+                />
+            }
 
             <View>
                 <Text style={style.title}>{title}</Text>
@@ -51,6 +54,12 @@ export default function YoutubeChannelPage(){
 
         {loadingData == State.LOADING && <Text>Carregando...</Text>}
         {loadingData == State.ERROR && <Text>Erro ao Carregar</Text>}
+        {loadingData == State.SUCCESS &&
+            <YotubeVideoList 
+                PlaylistId={data["contentDetails"]["relatedPlaylists"]["uploads"]}
+                autoNext={false}
+            />
+        }
         
     </ScrollView>)
 
@@ -58,7 +67,7 @@ export default function YoutubeChannelPage(){
 
 const style = StyleSheet.create({
     "redView": {
-        backgroundColor: "#ff0040",
+        backgroundColor: "#ff7f7f",
         flexDirection: "row",
         padding: 10
     },
